@@ -18,11 +18,17 @@ On Laravel side, install the package via composer:
 composer require --dev saucebase/laravel-playwright
 ```
 
-On Playwright side, install the package via npm:
+On Playwright side, add the package to your `package.json` dependencies, pointing to the copy included with the Laravel package:
 
-```bash
-npm install @saucebase/laravel-playwright
+```json
+{
+    "dependencies": {
+        "@saucebase/laravel-playwright": "file:vendor/saucebase/laravel-playwright"
+    }
+}
 ```
+
+Then run `npm install`.
 
 ## ⚙️ Laravel Config
 
@@ -110,7 +116,7 @@ In your Playwright tests, swap the `test` import from `@playwright/test` to `@sa
 + import { test } from '@saucebase/laravel-playwright';
 
 test('example', async ({ laravel }) => {
-    laravel.artisan('migrate:fresh');
+    await laravel.artisan('migrate:fresh');
 });
 ```
 
