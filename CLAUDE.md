@@ -2,6 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Git
+
+- Commit messages must be a single line — no body, no bullet points
+- No `Co-Authored-By` or AI attribution lines in commits
+
 ## Commands
 
 ```bash

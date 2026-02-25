@@ -10,195 +10,234 @@ This repository contains a Laravel and a Playwright library to help you write E2
 - Registering a boot function to run on each Laravel request. You can use this feature to mock a service dependency, for example.
 - Traveling to a specific time in the application during the test
 
-## Installation
+## 📦 Installation
 
 On Laravel side, install the package via composer:
 
 ```bash
-composer require --dev hyvor/laravel-playwright
+composer require --dev saucebase/laravel-playwright
 ```
 
 On Playwright side, install the package via npm:
 
 ```bash
-npm install @hyvor/laravel-playwright
+npm install @saucebase/laravel-playwright
 ```
 
-## Laravel Config
+## ⚙️ Laravel Config
 
-You can configure the routes by adding an `e2e` key to your `config/app.php` file. The following options are available (default values are shown):
+Publish the config file:
+
+```bash
+php artisan vendor:publish --tag=laravel-playwright-config
+```
+
+This creates `config/laravel-playwright.php` with the following options:
 
 ```php
 return [
-    // ...
+    /**
+     * The prefix for the testing endpoints used to interact with Playwright.
+     * Make sure to update `use.laravelBaseUrl` in playwright.config.ts if you change this.
+     */
+    'prefix' => env('PLAYWRIGHT_PREFIX', 'playwright'),
 
-    'e2e' => [
-        /**
-        * The prefix for the testing endpoints that are used to interact with Playwright
-        * Make sure to change `use.laravelBaseUrl` in playwright.config.ts if you change this
-        */
-        'prefix' => 'playwright',
-        
-        /**
-        * The environments in which the testing endpoints are enabled
-        * CAUTION: Enabling the testing endpoints in production can be a critical security issue
-        */
-        'environments' => ['local', 'testing'],
-    ],
+    /**
+     * The environments in which the testing endpoints are enabled.
+     * CAUTION: Enabling testing endpoints in production is a critical security issue.
+     */
+    'environments' => ['local', 'testing'],
+
+    /**
+     * Optional secret token to authenticate Playwright requests.
+     * Set PLAYWRIGHT_SECRET in your .env and laravelSecret in playwright.config.ts.
+     */
+    'secret' => env('PLAYWRIGHT_SECRET', null),
 ];
 ```
 
-## Playwright Config
+## 🎭 Playwright Config
 
-Set `use.laravelBaseUrl` in your `playwright.config.ts` file to the base URL of your testing endpoints. This is the URL of your application + the `prefix` you set in Laravel config.
+Set `use.laravelBaseUrl` in your `playwright.config.ts` to the base URL of your testing endpoints (your application URL + the `prefix` from Laravel config).
 
 ```ts
 export default defineConfig({
-    // ...other
+    /** ...other config */
     use: {
         laravelBaseUrl: 'http://localhost/playwright',
+        laravelSecret: process.env.PLAYWRIGHT_SECRET,  // optional
     },
 });
 ```
 
-If you use Typescript, include the `LaravelOptions` type in the `defineConfig` function.
+If you use TypeScript, include the `LaravelOptions` type in the `defineConfig` function.
 
 ```ts
-import type { LaravelOptions } from '@hyvor/laravel-playwright';
+import type { LaravelOptions } from '@saucebase/laravel-playwright';
 
 export default defineConfig<LaravelOptions>({
     use: {
         laravelBaseUrl: 'http://localhost/playwright',
+        laravelSecret: process.env.PLAYWRIGHT_SECRET,  // optional
     },
 });
 ```
 
-## Setting up tests
+## 🔒 Security
 
-In your Playwright tests, swap the `test` import from `@playwright/test` to `@hyvor/laravel-playwright`.
+The package supports an optional shared secret to prevent unauthorized access to the testing endpoints.
+
+**Laravel `.env`:**
+```
+PLAYWRIGHT_SECRET=some-secret
+```
+
+**`playwright.config.ts`:**
+```ts
+use: {
+    laravelSecret: process.env.PLAYWRIGHT_SECRET,
+},
+```
+
+When configured, the TypeScript client sends the secret as an `X-Playwright-Secret` header on every request. Laravel returns `401 Unauthorized` if the header is missing or doesn't match. When `PLAYWRIGHT_SECRET` is not set, all requests pass through (backwards compatible).
+
+## 🧪 Setting up tests
+
+In your Playwright tests, swap the `test` import from `@playwright/test` to `@saucebase/laravel-playwright`.
 
 ```diff
 - import { test } from '@playwright/test';
-+ import { test } from '@hyvor/laravel-playwright';
++ import { test } from '@saucebase/laravel-playwright';
 
 test('example', async ({ laravel }) => {
     laravel.artisan('migrate:fresh');
 });
-``` 
+```
 
-> **Note**: In practise, it is not recommended to import from `@hyvor/laravel-playwright` directly on every test file, if you have many. Instead, create your own [test fixture](https://playwright.dev/docs/test-fixtures) extending `test` from `@hyvor/laravel-playwright` and import that fixture in your tests.
+> **Note**: In practice, it is not recommended to import from `@saucebase/laravel-playwright` directly in every test file if you have many. Instead, create your own [test fixture](https://playwright.dev/docs/test-fixtures) extending `test` from `@saucebase/laravel-playwright` and import that fixture in your tests.
 
-## Basic Usage
+## 🚀 Basic Usage
 
 ```ts
-import { test } from '@hyvor/laravel-playwright';
+import { test } from '@saucebase/laravel-playwright';
 
 test('example', async ({ laravel }) => {
 
-    // RUN ARTISAN COMMANDS
-    // ====================
+    /** 🏃 RUN ARTISAN COMMANDS */
     const output = await laravel.artisan('migrate:fresh');
-    // output.code: number - The exit code of the command
-    // output.output: string - The output of the command
-    // with parameters
+    /**
+     * output.code: number - The exit code of the command
+     * output.output: string - The output of the command
+     */
+    /** with parameters */
     await laravel.artisan('db:seed', ['--class', 'DatabaseSeeder']);
-    
-    
-    // TRUNCATE TABLES
-    // ===============
+
+
+    /** 🗑️ TRUNCATE TABLES */
     await laravel.truncate();
-    // in specific DB connections
+    /** in specific DB connections */
     await laravel.truncate(['connection1', 'connection2']);
-    
-    
-    // CREATE MODELS FROM FACTORIES
-    // ============================
-    // Create a App\Models\User model
-    // user will be an object of the model
+
+
+    /** 🏭 CREATE MODELS FROM FACTORIES */
+    /**
+     * Create a App\Models\User model
+     * user will be an object of the model
+     */
     const user = await laravel.factory('User');
-    // Create a App\Models\User model with attributes
+    /** Create a App\Models\User model with attributes */
     await laravel.factory('User', { name: 'John Doe' });
-    // Create 5 App\Models\User models
-    // users will be an array of the models
+    /**
+     * Create 5 App\Models\User models
+     * users will be an array of the models
+     */
     const users = await laravel.factory('User', {}, 5);
-    // Create a CustomModel model
+    /** Create a CustomModel model */
     await laravel.factory('CustomModel');
-    
-    
-    // RUN A DATABASE QUERY
-    // ====================
-    // Run a query
+
+
+    /** 💾 RUN A DATABASE QUERY */
+    /** Run a query */
     await laravel.query('DELETE FROM users');
-    // Run a query with bindings
+    /** Run a query with bindings */
     await laravel.query('DELETE FROM users WHERE id = ?', [1]);
-    // Run a query on a specific connection
+    /** Run a query on a specific connection */
     await laravel.query('DELETE FROM users', [], { connection: 'connection1' });
-    // Run a unprepared statement
+    /** Run an unprepared statement */
     await laravel.query(`
         DROP SCHEMA public CASCADE;
         CREATE SCHEMA public;
         GRANT ALL ON SCHEMA public TO public;
     `, [], { unprepared: true });
-    
-    
-    // RUN A SELECT QUERY
-    // ==================
-    // Run a select query
-    // Returns an array of objects
+
+
+    /** 🔍 RUN A SELECT QUERY */
+    /**
+     * Run a select query
+     * Returns an array of objects
+     */
     const blogs = await laravel.select('SELECT * FROM blogs');
-    // Run a select query with bindings
+    /** Run a select query with bindings */
     await laravel.select('SELECT * FROM blogs WHERE id = ?', [1]);
-    // Run a select query on a specific connection
-    await laravel.select('SELECT * FROM blogs', [], { connection: 'connection1' });
-    
-    
-    // RUN A PHP FUNCTION
-    // ==================
-    // Run a PHP function
-    // Returns the output of the function
-    // Output is JSON encoded in Laravel and decoded in Playwright
-    // The following examples call this function:
-    // function sayHello($name) { return "Hello, $name!"; }
+    /** Run a select query on a specific connection */
+    await laravel.select('SELECT * FROM blogs', {}, { connection: 'connection1' });
+
+
+    /** ⚙️ RUN A PHP FUNCTION */
+    /**
+     * Run a PHP function
+     * Returns the output of the function
+     * Output is JSON encoded in Laravel and decoded in Playwright
+     * The following examples call this function:
+     * function sayHello($name) { return "Hello, $name!"; }
+     */
     const funcOutput = await laravel.callFunction('sayHello');
-    // Run a PHP function with parameters
+    /** Run a PHP function with parameters */
     await laravel.callFunction('sayHello', ['John']);
-    // Run a PHP function with named parameters
+    /** Run a PHP function with named parameters */
     await laravel.callFunction('sayHello', { name: 'John' });
-    // Run a static class method
+    /** Run a static class method */
     await laravel.callFunction("App\\MyAwesomeClass::method");
-    
+
 });
 
 
 ```
 
-## Dynamic Configuration
+## 🔄 Dynamic Configuration
 
 You can update Laravel config for **ALL** subsequent requests until the test ends.
 
 ```ts
-import { test } from '@hyvor/laravel-playwright';
+import { test } from '@saucebase/laravel-playwright';
 
 test('example', async ({ laravel }) => {
 
-    // SET DYNAMIC CONFIG
-    // ==================
-    // Update a config value
-    // This value will be used in all subsequent requests sent to Laravel
-    // until the test ends and calls `tearDown` (which is done automatically)
-    await laravel.config('app.timezone', 'Europe/Paris');
-    
-    // TRAVEL TO A TIME
-    // =================
-    // Travel to a specific time in the application
-    // This is similar to Laravel's `travelTo` method
+    /** 🔧 SET DYNAMIC CONFIG */
+    /**
+     * Update a config value
+     * This value will be used in all subsequent requests sent to Laravel
+     * until the test ends and calls `tearDown` (which is done automatically)
+     */
+    await laravel.config('app.timezone', 'America/Sao_Paulo');
+
+    /** ⏰ TRAVEL TO A TIME */
+    /**
+     * Travel to a specific time in the application
+     * This is similar to Laravel's `travelTo` method
+     */
     await laravel.travel('2022-01-01 12:00:00');
-    
-    // REGISTER A BOOT FUNCTION
-    // ========================
-    // Register a function to run while Laravel is booting
-    // This is useful to mock a service dependency, for example
+
+    /** 🚀 REGISTER A BOOT FUNCTION */
+    /**
+     * Register a function to run while Laravel is booting
+     * This is useful to mock a service dependency, for example
+     */
     await laravel.registerBootFunction('App\\E2EHelper::swapPaymentService');
 
 });
 ```
+
+## 🙏 Credits
+
+This package is a fork of [hyvor/laravel-playwright](https://github.com/hyvor/laravel-playwright) by [Hyvor](https://hyvor.com).
