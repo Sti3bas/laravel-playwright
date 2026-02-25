@@ -157,13 +157,12 @@ test('example', async ({ laravel }) => {
 
 
     /** 💾 RUN A DATABASE QUERY */
-    /** Run a query */
     await laravel.query('DELETE FROM users');
-    /** Run a query with bindings */
+    /** with bindings */
     await laravel.query('DELETE FROM users WHERE id = ?', [1]);
-    /** Run a query on a specific connection */
+    /** on a specific connection */
     await laravel.query('DELETE FROM users', [], { connection: 'connection1' });
-    /** Run an unprepared statement */
+    /** unprepared statement */
     await laravel.query(`
         DROP SCHEMA public CASCADE;
         CREATE SCHEMA public;
@@ -172,31 +171,26 @@ test('example', async ({ laravel }) => {
 
 
     /** 🔍 RUN A SELECT QUERY */
-    /**
-     * Run a select query
-     * Returns an array of objects
-     */
+    /** returns an array of objects */
     const blogs = await laravel.select('SELECT * FROM blogs');
-    /** Run a select query with bindings */
+    /** with bindings */
     await laravel.select('SELECT * FROM blogs WHERE id = ?', [1]);
-    /** Run a select query on a specific connection */
+    /** on a specific connection */
     await laravel.select('SELECT * FROM blogs', {}, { connection: 'connection1' });
 
 
     /** ⚙️ RUN A PHP FUNCTION */
     /**
-     * Run a PHP function
-     * Returns the output of the function
      * Output is JSON encoded in Laravel and decoded in Playwright
      * The following examples call this function:
      * function sayHello($name) { return "Hello, $name!"; }
      */
     const funcOutput = await laravel.callFunction('sayHello');
-    /** Run a PHP function with parameters */
+    /** with positional parameters */
     await laravel.callFunction('sayHello', ['John']);
-    /** Run a PHP function with named parameters */
+    /** with named parameters */
     await laravel.callFunction('sayHello', { name: 'John' });
-    /** Run a static class method */
+    /** static class method */
     await laravel.callFunction("App\\MyAwesomeClass::method");
 
 });
@@ -215,24 +209,17 @@ test('example', async ({ laravel }) => {
 
     /** 🔧 SET DYNAMIC CONFIG */
     /**
-     * Update a config value
-     * This value will be used in all subsequent requests sent to Laravel
-     * until the test ends and calls `tearDown` (which is done automatically)
+     * Persists for all subsequent requests until the test ends
+     * and tearDown is called (done automatically)
      */
     await laravel.config('app.timezone', 'America/Sao_Paulo');
 
     /** ⏰ TRAVEL TO A TIME */
-    /**
-     * Travel to a specific time in the application
-     * This is similar to Laravel's `travelTo` method
-     */
+    /** similar to Laravel's `travelTo` method */
     await laravel.travel('2022-01-01 12:00:00');
 
     /** 🚀 REGISTER A BOOT FUNCTION */
-    /**
-     * Register a function to run while Laravel is booting
-     * This is useful to mock a service dependency, for example
-     */
+    /** useful to mock a service dependency, for example */
     await laravel.registerBootFunction('App\\E2EHelper::swapPaymentService');
 
 });
