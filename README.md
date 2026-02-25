@@ -1,4 +1,5 @@
-# Laravel Playwright
+# Laravel Playwright [WORK IN PROGRESS]
+
 
 This repository contains a Laravel and a Playwright library to help you write E2E tests for your Laravel application using [Playwright](https://playwright.dev/). It adds a set of endpoints to your Laravel application to allow Playwright to interact with it. You can do the following from your Playwright tests:
 
