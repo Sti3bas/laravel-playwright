@@ -1,0 +1,25 @@
+# Composer
+/vendor/
+composer.lock
+
+# Node
+/node_modules/
+
+# Build artifacts (dist is committed for vendor import)
+# playwright/dist is intentionally tracked
+
+# Editor directories
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+.claude
+
+# Test / runtime
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+/storage/laravel-playwright-config.json
+.phpunit.result.cache

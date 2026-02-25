@@ -1,0 +1,41 @@
+{
+  "name": "@saucebase/laravel-playwright",
+  "version": "0.0.0",
+  "description": "Blends Laravel and Playwright into seamless E2E tests — factories, queries, artisan commands, and time travel.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sauce-base/laravel-playwright"
+  },
+  "bugs": {
+    "url": "https://github.com/sauce-base/laravel-playwright/issues"
+  },
+  "homepage": "https://github.com/sauce-base/laravel-playwright",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "typescript": "~5.6.2",
+    "vite": "^6.0.5"
+  },
+  "peerDependencies": {
+    "@playwright/test": "^1.49.1"
+  },
+  "exports": {
+    ".": {
+      "types": "./playwright/dist/index.d.ts",
+      "import": "./playwright/dist/laravel-playwright.js",
+      "require": "./playwright/dist/laravel-playwright.umd.cjs"
+    }
+  },
+  "files": [
+    "playwright/dist"
+  ],
+  "dependencies": {
+    "vite-plugin-dts": "^4.5.0"
+  }
+}

@@ -1,0 +1,49 @@
+{
+    "name": "saucebase/laravel-playwright",
+    "description": "Blends Laravel and Playwright into seamless E2E tests — factories, queries, artisan commands, and time travel.",
+    "keywords": ["laravel", "playwright", "e2e", "testing", "end-to-end", "factory", "artisan", "integration-testing"],
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://github.com/sauce-base/laravel-playwright",
+    "support": {
+        "issues": "https://github.com/sauce-base/laravel-playwright/issues",
+        "source": "https://github.com/sauce-base/laravel-playwright"
+    },
+    "autoload": {
+        "psr-4": {
+            "Saucebase\\LaravelPlaywright\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Saucebase\\LaravelPlaywright\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Saucebase",
+            "email": "hello@saucebase.dev"
+        }
+    ],
+    "require": {
+        "php": ">=8.2"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0",
+        "phpstan/phpstan": "^2.0",
+        "larastan/larastan": "^3.0",
+        "phpunit/phpunit": "^10.5"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Saucebase\\LaravelPlaywright\\ServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
