@@ -10,13 +10,14 @@ use Saucebase\LaravelPlaywright\Http\Controllers\SelectController;
 use Saucebase\LaravelPlaywright\Http\Controllers\TearDownController;
 use Saucebase\LaravelPlaywright\Http\Controllers\TravelController;
 use Saucebase\LaravelPlaywright\Http\Controllers\TruncateController;
+use Saucebase\LaravelPlaywright\Http\Middleware\ForceJson;
 use Saucebase\LaravelPlaywright\Http\Middleware\VerifyPlaywrightSecret;
 use Saucebase\LaravelPlaywright\Services\Config as LaravelPlaywrightConfig;
 use Illuminate\Support\Facades\Route;
 
 
 Route::prefix(LaravelPlaywrightConfig::prefix())
-    ->middleware(VerifyPlaywrightSecret::class)
+    ->middleware([ForceJson::class, VerifyPlaywrightSecret::class])
     ->group(
         function () {
             Route::post('artisan', ArtisanController::class);

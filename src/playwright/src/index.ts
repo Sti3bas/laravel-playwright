@@ -40,7 +40,7 @@ export class Laravel {
 
     async call<T = unknown>(endpoint: string, data: object = {}) : Promise<T> {
         const url = this.baseUrl.replace(/\/$/, '') + endpoint;
-        const headers: Record<string, string> = {};
+        const headers: Record<string, string> = {'Accept': 'application/json'};
         if (this.secret) headers['X-Playwright-Secret'] = this.secret;
         const response = await this.request.post(url, {data, headers});
         if (response.status() !== 200) {
