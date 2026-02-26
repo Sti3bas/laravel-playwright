@@ -12,7 +12,7 @@ class l {
     this.baseUrl = t, this.request = a, this.secret = e;
   }
   async call(t, a = {}) {
-    const e = this.baseUrl.replace(/\/$/, "") + t, n = {};
+    const e = this.baseUrl.replace(/\/$/, "") + t, n = { Accept: "application/json" };
     this.secret && (n["X-Playwright-Secret"] = this.secret);
     const r = await this.request.post(e, { data: a, headers: n });
     if (r.status() !== 200)
