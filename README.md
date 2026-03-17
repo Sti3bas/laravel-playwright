@@ -59,7 +59,7 @@ return [
 
 ## 💡 Example
 
-If you need a good and more complex example of a repository using this package, look at https://github.com/sauce-base/saucebas
+If you need a good and more complex example of a repository using this package, look at https://github.com/saucebase-dev/saucebase
 
 ## 🎭 Playwright Config
 
