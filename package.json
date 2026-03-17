@@ -5,12 +5,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sauce-base/laravel-playwright"
+    "url": "https://github.com/saucebase-dev/laravel-playwright"
   },
   "bugs": {
-    "url": "https://github.com/sauce-base/laravel-playwright/issues"
+    "url": "https://github.com/saucebase-dev/laravel-playwright/issues"
   },
-  "homepage": "https://github.com/sauce-base/laravel-playwright",
+  "homepage": "https://github.com/saucebase-dev/laravel-playwright",
   "type": "module",
   "scripts": {
     "build": "tsc && vite build"
