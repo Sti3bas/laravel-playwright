@@ -29,7 +29,7 @@ class QueryController
 
         $connection = DB::connection($connection);
         $success = $unprepared ?
-            $connection->unprepared($query) :
+            $connection->unprepared($query) : // @phpstan-ignore argument.type (intentional: test helper accepts arbitrary SQL)
             $connection->statement($query, $bindings);
 
         return Response::json([
