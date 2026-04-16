@@ -26,7 +26,17 @@ class DynamicConfig
 
     public static function getFilePath(): string
     {
-        return storage_path('laravel-playwright-config.json');
+        $worker = null;
+
+        if (app()->bound('request')) {
+            $worker = request()->header('X-Playwright-Worker');
+        }
+
+        $filename = $worker !== null
+            ? "laravel-playwright-config-{$worker}.json"
+            : 'laravel-playwright-config.json';
+
+        return storage_path($filename);
     }
 
     public static function load(): void
