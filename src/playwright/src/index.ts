@@ -65,19 +65,22 @@ export class Laravel {
     async factory(
         model: string,
         attrs?: Record<string, unknown>,
-        count?: undefined
+        count?: undefined,
+        states?: string[]
     ): Promise<Record<string, unknown>>;
     async factory(
         model: string,
         attrs: Record<string, unknown>,
-        count: number
+        count: number,
+        states?: string[]
     ): Promise<Record<string, unknown>[]>;
     async factory(
         model: string,
         attrs: Record<string, unknown> = {},
-        count?: number
+        count?: number,
+        states?: string[]
     ): Promise<Record<string, unknown> | Record<string, unknown>[]> {
-        return await this.call('/factory', {model, count, attrs});
+        return await this.call('/factory', {model, count, attrs, states});
     }
 
     async query(

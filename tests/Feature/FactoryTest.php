@@ -54,4 +54,41 @@ class FactoryTest extends TestCase
         ])->assertUnprocessable();
     }
 
+    public function testCreatesModelFromFactoryWithStates(): void
+    {
+        $this->postJson('playwright/factory', [
+            'model' => '\Saucebase\LaravelPlaywright\Tests\Helpers\UserModel',
+            'states' => ['admin'],
+        ])
+            ->assertOk()
+            ->assertJsonPath('name', 'Admin User');
+
+        $this->assertEquals(1, UserModel::count());
+        $this->assertEquals('Admin User', UserModel::firstOrFail()->name);
+    }
+
+    public function testStatesCanBeOverriddenByAttrs(): void
+    {
+        $this->postJson('playwright/factory', [
+            'model' => '\Saucebase\LaravelPlaywright\Tests\Helpers\UserModel',
+            'states' => ['admin'],
+            'attrs' => [
+                'name' => 'Override User',
+            ]
+        ])
+            ->assertOk()
+            ->assertJsonPath('name', 'Override User');
+
+        $this->assertEquals(1, UserModel::count());
+        $this->assertEquals('Override User', UserModel::firstOrFail()->name);
+    }
+
+    public function testRejectsUnknownFactoryState(): void
+    {
+        $this->postJson('playwright/factory', [
+            'model' => '\Saucebase\LaravelPlaywright\Tests\Helpers\UserModel',
+            'states' => ['nonExistentState'],
+        ])->assertUnprocessable();
+    }
+
 }

@@ -25,8 +25,8 @@ export declare class Laravel {
         output: string;
     }>;
     truncate(connections?: (string | null)[]): Promise<unknown>;
-    factory(model: string, attrs?: Record<string, unknown>, count?: undefined): Promise<Record<string, unknown>>;
-    factory(model: string, attrs: Record<string, unknown>, count: number): Promise<Record<string, unknown>[]>;
+    factory(model: string, attrs?: Record<string, unknown>, count?: undefined, states?: string[]): Promise<Record<string, unknown>>;
+    factory(model: string, attrs: Record<string, unknown>, count: number, states?: string[]): Promise<Record<string, unknown>[]>;
     query(query: string, bindings?: unknown[], options?: {
         connection?: string | null;
         unprepared?: boolean;

@@ -19,4 +19,11 @@ class UserFactory extends Factory
         ];
     }
 
+    public function admin(): static
+    {
+        return $this->state([
+            'name' => 'Admin User',
+        ]);
+    }
+
 }

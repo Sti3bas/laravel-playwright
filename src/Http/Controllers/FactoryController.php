@@ -17,12 +17,15 @@ class FactoryController
             'model' => 'string|required',
             'count' => 'nullable|integer',
             'attrs' => 'array',
+            'states' => 'nullable|array',
         ]);
 
         $modelClass = (string) $request->string('model');
         $count = $request->has('count') ? $request->integer('count') : null;
         /** @var array<string, mixed> $attrs */
         $attrs = (array) $request->input('attrs');
+        /** @var list<string> $states */
+        $states = (array) $request->input('states', []);
 
         if (!class_exists($modelClass)) {
             $modelClass = 'App\\Models\\' . $modelClass;
@@ -47,6 +50,20 @@ class FactoryController
 
         if ($count !== null) {
             $modelFactory = $modelFactory->count($count);
+        }
+
+        foreach ($states as $state) {
+            if (!method_exists($modelFactory, $state)) {
+                abort(422, "Factory state [{$state}] not found");
+            }
+
+            $stateResult = $modelFactory->{$state}();
+
+            if (!$stateResult instanceof Factory) {
+                abort(422, "Factory state [{$state}] must return a factory instance");
+            }
+
+            $modelFactory = $stateResult;
         }
 
         $models = $modelFactory->create($attrs);

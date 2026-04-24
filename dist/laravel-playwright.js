@@ -2,9 +2,9 @@ import { test as i } from "@playwright/test";
 const u = i.extend({
   laravelBaseUrl: [void 0, { option: !0 }],
   laravelSecret: [void 0, { option: !0 }],
-  laravel: async ({ laravelBaseUrl: s, laravelSecret: t, baseURL: a, request: e }, n) => {
-    const r = s || a + "/playwright", c = new l(r, e, t);
-    await n(c), await c.tearDown();
+  laravel: async ({ laravelBaseUrl: s, laravelSecret: t, baseURL: a, request: e }, r) => {
+    const n = s || a + "/playwright", c = new l(n, e, t);
+    await r(c), await c.tearDown();
   }
 });
 class l {
@@ -12,16 +12,16 @@ class l {
     this.baseUrl = t, this.request = a, this.secret = e;
   }
   async call(t, a = {}) {
-    const e = this.baseUrl.replace(/\/$/, "") + t, n = { Accept: "application/json" };
-    this.secret && (n["X-Playwright-Secret"] = this.secret);
-    const r = await this.request.post(e, { data: a, headers: n });
-    if (r.status() !== 200)
+    const e = this.baseUrl.replace(/\/$/, "") + t, r = { Accept: "application/json" };
+    this.secret && (r["X-Playwright-Secret"] = this.secret);
+    const n = await this.request.post(e, { data: a, headers: r });
+    if (n.status() !== 200)
       throw new Error(`
                 Failed to call Laravel ${t}.
-                Status: ${r.status()}
-                Response: ${await r.text()}
+                Status: ${n.status()}
+                Response: ${await n.text()}
             `);
-    return await r.json();
+    return await n.json();
   }
   async artisan(t, a = []) {
     return await this.call("/artisan", { command: t, parameters: a });
@@ -29,23 +29,23 @@ class l {
   async truncate(t = []) {
     return await this.call("/truncate", { connections: t });
   }
-  async factory(t, a = {}, e) {
-    return await this.call("/factory", { model: t, count: e, attrs: a });
+  async factory(t, a = {}, e, r) {
+    return await this.call("/factory", { model: t, count: e, attrs: a, states: r });
   }
   async query(t, a = [], e = {}) {
-    const { connection: n = null, unprepared: r = !1 } = e;
-    if (r && a.length > 0)
+    const { connection: r = null, unprepared: n = !1 } = e;
+    if (n && a.length > 0)
       throw new Error("Cannot use unprepared with bindings");
     return await this.call("/query", {
       query: t,
       bindings: a,
-      connection: n,
-      unprepared: r
+      connection: r,
+      unprepared: n
     });
   }
   async select(t, a = {}, e = {}) {
-    const { connection: n = null } = e;
-    return await this.call("/select", { query: t, bindings: a, connection: n });
+    const { connection: r = null } = e;
+    return await this.call("/select", { query: t, bindings: a, connection: r });
   }
   async callFunction(t, a = []) {
     return await this.call("/function", { function: t, args: a });
