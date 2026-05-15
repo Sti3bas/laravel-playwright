@@ -2,6 +2,7 @@
 
 namespace Saucebase\LaravelPlaywright\Tests\Feature;
 
+use Saucebase\LaravelPlaywright\Tests\Helpers\PostModel;
 use Saucebase\LaravelPlaywright\Tests\Helpers\UserModel;
 use Saucebase\LaravelPlaywright\Tests\TestCase;
 
@@ -89,6 +90,37 @@ class FactoryTest extends TestCase
             'model' => '\Saucebase\LaravelPlaywright\Tests\Helpers\UserModel',
             'states' => ['nonExistentState'],
         ])->assertUnprocessable();
+    }
+
+    public function testCreatesMultipleModelsInBatch(): void
+    {
+        $response = $this->postJson('playwright/factory', [
+            'items' => [
+                [
+                    'model' => '\Saucebase\LaravelPlaywright\Tests\Helpers\UserModel',
+                    'attrs' => ['name' => 'John Doe'],
+                ],
+                [
+                    'model' => '\Saucebase\LaravelPlaywright\Tests\Helpers\PostModel',
+                    'attrs' => ['title' => 'Hello World'],
+                ],
+                [
+                    'model' => '\Saucebase\LaravelPlaywright\Tests\Helpers\UserModel',
+                    'count' => 2,
+                    'states' => ['admin'],
+                ],
+            ],
+        ])
+            ->assertOk()
+            ->assertJsonCount(3);
+
+        $response->assertJsonPath('0.name', 'John Doe');
+        $response->assertJsonPath('1.title', 'Hello World');
+        $response->assertJsonPath('2.0.name', 'Admin User');
+        $response->assertJsonPath('2.1.name', 'Admin User');
+
+        $this->assertEquals(3, UserModel::count());
+        $this->assertEquals(1, PostModel::count());
     }
 
 }

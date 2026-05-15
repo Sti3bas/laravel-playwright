@@ -12,10 +12,17 @@ class Migrations
     public static function run(): void
     {
         Schema::dropIfExists('users');
+        Schema::dropIfExists('posts');
 
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('posts', function (Blueprint $table) {
+            $table->id();
+            $table->string('title')->nullable();
             $table->timestamps();
         });
     }

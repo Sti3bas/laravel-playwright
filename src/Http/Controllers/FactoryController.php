@@ -13,6 +13,32 @@ class FactoryController
 
     public function __invoke(Request $request): JsonResponse
     {
+        if ($request->has('items')) {
+            $request->validate([
+                'items' => 'required|array',
+                'items.*.model' => 'required|string',
+                'items.*.count' => 'nullable|integer',
+                'items.*.attrs' => 'nullable|array',
+                'items.*.states' => 'nullable|array',
+            ]);
+
+            $results = [];
+
+            /** @var list<array{model: string, count?: int|null, attrs?: array<string, mixed>, states?: list<string>}> $items */
+            $items = $request->input('items');
+
+            foreach ($items as $item) {
+                $results[] = $this->processItem(
+                    $item['model'],
+                    $item['count'] ?? null,
+                    $item['attrs'] ?? [],
+                    $item['states'] ?? []
+                );
+            }
+
+            return Response::json($results);
+        }
+
         $request->validate([
             'model' => 'string|required',
             'count' => 'nullable|integer',
@@ -27,6 +53,16 @@ class FactoryController
         /** @var list<string> $states */
         $states = (array) $request->input('states', []);
 
+        return Response::json($this->processItem($modelClass, $count, $attrs, $states));
+    }
+
+    /**
+     * @param  array<string, mixed>  $attrs
+     * @param  list<string>          $states
+     * @return mixed
+     */
+    private function processItem(string $modelClass, ?int $count, array $attrs, array $states): mixed
+    {
         if (!class_exists($modelClass)) {
             $modelClass = 'App\\Models\\' . $modelClass;
         }
@@ -66,9 +102,7 @@ class FactoryController
             $modelFactory = $stateResult;
         }
 
-        $models = $modelFactory->create($attrs);
-
-        return Response::json($models);
+        return $modelFactory->create($attrs);
     }
 
 }

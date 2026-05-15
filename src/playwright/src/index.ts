@@ -30,6 +30,13 @@ export const test = playwrightTest.extend<LaravelFixtures & LaravelOptions>({
 
 })
 
+export interface FactoryDefinition {
+    model: string;
+    count?: number;
+    attrs?: Record<string, unknown>;
+    states?: string[];
+}
+
 export class Laravel {
 
     constructor(
@@ -63,6 +70,9 @@ export class Laravel {
     }
 
     async factory(
+        items: FactoryDefinition[]
+    ): Promise<(Record<string, unknown> | Record<string, unknown>[])[]>;
+    async factory(
         model: string,
         attrs?: Record<string, unknown>,
         count?: undefined,
@@ -75,11 +85,14 @@ export class Laravel {
         states?: string[]
     ): Promise<Record<string, unknown>[]>;
     async factory(
-        model: string,
+        model: string | FactoryDefinition[],
         attrs: Record<string, unknown> = {},
         count?: number,
         states?: string[]
-    ): Promise<Record<string, unknown> | Record<string, unknown>[]> {
+    ): Promise<Record<string, unknown> | Record<string, unknown>[] | (Record<string, unknown> | Record<string, unknown>[])[]> {
+        if (Array.isArray(model)) {
+            return await this.call('/factory', {items: model});
+        }
         return await this.call('/factory', {model, count, attrs, states});
     }
 
