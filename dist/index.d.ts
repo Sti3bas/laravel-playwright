@@ -14,6 +14,12 @@ interface LaravelFixtures {
     laravel: Laravel;
 }
 export declare const test: import('playwright/test').TestType<import('playwright/test').PlaywrightTestArgs & import('playwright/test').PlaywrightTestOptions & LaravelFixtures & LaravelOptions, import('playwright/test').PlaywrightWorkerArgs & import('playwright/test').PlaywrightWorkerOptions>;
+export interface FactoryDefinition {
+    model: string;
+    count?: number;
+    attrs?: Record<string, unknown>;
+    states?: string[];
+}
 export declare class Laravel {
     private baseUrl;
     private request;
@@ -25,6 +31,7 @@ export declare class Laravel {
         output: string;
     }>;
     truncate(connections?: (string | null)[]): Promise<unknown>;
+    factory(items: FactoryDefinition[]): Promise<(Record<string, unknown> | Record<string, unknown>[])[]>;
     factory(model: string, attrs?: Record<string, unknown>, count?: undefined, states?: string[]): Promise<Record<string, unknown>>;
     factory(model: string, attrs: Record<string, unknown>, count: number, states?: string[]): Promise<Record<string, unknown>[]>;
     query(query: string, bindings?: unknown[], options?: {
