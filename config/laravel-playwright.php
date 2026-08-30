@@ -9,6 +9,16 @@ return [
     'prefix' => env('PLAYWRIGHT_PREFIX', 'playwright'),
 
     /**
+     * The base name used to build per-worker Typesense collection prefixes
+     * for Artisan commands run through the /playwright/artisan endpoint,
+     * e.g. worker 1 with a base of 'playwright' indexes into playwright_1_*.
+     * Change this so parallel checkouts (git worktrees) don't share
+     * collections: set it per checkout and point your frontend's collection
+     * naming at the same value.
+     */
+    'worker_prefix' => env('PLAYWRIGHT_PREFIX_BASE', 'playwright'),
+
+    /**
      * The environments in which the Playwright endpoints should be available.
      */
     'environments' => ['local', 'testing'],
